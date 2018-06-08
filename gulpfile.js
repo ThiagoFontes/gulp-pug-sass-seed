@@ -7,7 +7,8 @@ var gulp = require('gulp'),
   pug = require('gulp-pug'),
   prefix = require('gulp-autoprefixer'),
   sass = require('gulp-sass'),
-  browserSync = require('browser-sync');
+  browserSync = require('browser-sync'),
+  include = require('gulp-include');
 
 /*
  * Directories here
@@ -18,6 +19,17 @@ var paths = {
   css: './public/css/',
   data: './src/_data/'
 };
+
+//include javascript files
+gulp.task("scripts", function() {
+  console.log("-- gulp is running task 'scripts'");
+ 
+  gulp.src("src/js/*.js")
+    .pipe(include())
+      .on('error', console.log)
+    .pipe(gulp.dest('./public/js'));
+});
+
 
 /**
  * Compile .pug files and pass in data from json file
@@ -82,6 +94,7 @@ gulp.task('sass', function () {
 gulp.task('watch', function () {
   gulp.watch(paths.sass + '**/*.scss', ['sass']);
   gulp.watch('./src/**/*.pug', ['rebuild']);
+  gulp.watch('./src/js/*.js', ['scripts']);
 });
 
 // Build task compile sass and pug.
@@ -92,4 +105,4 @@ gulp.task('build', ['sass', 'pug']);
  * compile the jekyll site, launch BrowserSync then watch
  * files for changes
  */
-gulp.task('default', ['browser-sync', 'watch']);
+gulp.task('default', ['browser-sync', 'watch', 'scripts']);
